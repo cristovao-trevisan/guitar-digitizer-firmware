@@ -5,20 +5,16 @@
 #include "hw_config.h"
 #include "usb_pwr.h"
 #include "command.h"
-#include "buzzer.h"
-#include "armscope_settings.h"
 #include <string.h>
 
 int buzz = 0;
-static const char szId[] = "miniscope_v2c 20120414";
+static const char szId[] = "guitar digitalizer v0.1";
 /** This is data added as header to each frame that isn't actual data but that is reply
  to some host request.
  */
 static const unsigned char replyHeader[] = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
 		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
 		0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
-
-struct S_ARMSCOPE_SETTINGS settings;
 
 enum E_ACTION_REQUEST action = REQUEST_NONE;
 
@@ -106,7 +102,7 @@ void OnUsbDataRx(uint8_t* dataIn, uint8_t length) {
 	if (length >= 3) {
 		if (dataIn[2] == 0x00) //end of message detected - correct frame
 				{
-			enum E_ACTION_REQUEST tmp = ExecuteCmd(dataIn, length, &settings);
+			enum E_ACTION_REQUEST tmp = ExecuteCmd(dataIn, length);
 			if (tmp != REQUEST_NONE) {
 				action = tmp;
 			}
@@ -121,10 +117,6 @@ void OnAdcData(uint16_t *data, int len) {
 }
 
 void assert_failed(const char* file, uint32_t line) {
-	/* User can add his own implementation to report the file name and line number,
-	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	Buzzer_On();
-	/* Infinite loop */
 	while (1) {
 	}
 }
